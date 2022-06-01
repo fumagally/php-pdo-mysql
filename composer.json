@@ -6,7 +6,7 @@
         "database",
         "iterator"
     ],
-    "description": "A PHP MySQL PDO class",
+    "description": "A PHP MySQL PDO Class",
     "license": "Apache-2.0",
     "authors": [{
         "name": "Bruno Fumagally",
