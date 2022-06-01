@@ -1,40 +1,51 @@
 <?php
-class PDOIterator implements Iterator {
+
+namespace Fumagally\PDOMysql;
+
+class PDOIterator implements Iterator
+{
     private $position = 0;
     private $pdo;
     private $fetchMode;
     private $nextResult;
 
-    public function __construct(PDOStatement $pdo, $fetchMode = PDO::FETCH_ASSOC) {
+    public function __construct(PDOStatement $pdo, $fetchMode = PDO::FETCH_ASSOC)
+    {
         $this->position = 0;
         $this->pdo = $pdo;
         $this->fetchMode = $fetchMode;
     }
 
-    function rewind() {
+    public function rewind()
+    {
         $this->position = 0;
         $this->pdo->execute();
         $this->nextResult = $this->pdo->fetch($this->fetchMode, PDO::FETCH_ORI_NEXT);
     }
 
-    function current() {
+    public function current()
+    {
         return $this->nextResult;
     }
 
-    function key() {
+    public function key()
+    {
         return $this->position;
     }
 
-    function next() {
+    public function next()
+    {
         ++$this->position;
         $this->nextResult = $this->pdo->fetch($this->fetchMode, PDO::FETCH_ORI_NEXT);
     }
 
-    function valid() {
+    public function valid()
+    {
         $invalid = $this->nextResult === false;
         if ($invalid) {
             $this->pdo->closeCursor();
         }
+
         return !$invalid;
     }
 }
