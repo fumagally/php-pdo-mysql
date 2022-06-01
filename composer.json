@@ -1,0 +1,25 @@
+{
+    "name": "fumagally/php-pdo-mysql",
+    "keywords": [
+        "pdo",
+        "mysql",
+        "database",
+        "iterator"
+    ],
+    "description": "A PHP MySQL PDO class",
+    "license": "",
+    "authors": [{
+        "name": "Bruno Fumagally",
+        "email": "fumagally@gmail.com"
+    }],
+    "require": {
+        "php": ">=5.3.6",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*"
+    },
+    "autoload": {
+        "files": [
+            "src/PDO.class.php"
+        ]
+    }
+}
