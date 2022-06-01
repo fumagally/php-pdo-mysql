@@ -19,6 +19,8 @@
     },
     "autoload": {
         "files": [
+            "src/PDO.Iterator.class.php",
+            "src/PDO.Log.class.php",
             "src/PDO.class.php"
         ]
     }
