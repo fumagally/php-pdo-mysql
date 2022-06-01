@@ -2,25 +2,6 @@
 
 namespace Fumagally\PDOMysql;
 
-/*
- * PHP-PDO-MySQL-Class
- * https://github.com/lincanbin/PHP-PDO-MySQL-Class
- *
- * Copyright 2015 Canbin Lin (lincanbin@hotmail.com)
- * http://www.94cb.com/
- *
- * Licensed under the Apache License, Version 2.0:
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * A PHP MySQL PDO class similar to the Python MySQLdb.
- */
-require __DIR__.'/PDO.Log.class.php';
-require __DIR__.'/PDO.Iterator.class.php';
-/** Class DB
- * @property PDO pdo PDO object
- * @property PDOStatement sQuery PDOStatement
- * @property PDOLog PDOLog logObject
- */
 class DB
 {
     private $Host;
@@ -37,9 +18,9 @@ class DB
     public $columnCount = 0;
     public $querycount = 0;
 
-    private $retryAttempt = 0; // 失败重试次数
+    private $retryAttempt = 0;
     const AUTO_RECONNECT = true;
-    const RETRY_ATTEMPTS = 3; // 最大失败重试次数
+    const RETRY_ATTEMPTS = 3;
 
     /**
      * DB constructor.
@@ -52,7 +33,7 @@ class DB
      */
     public function __construct($Host, $DBPort, $DBName, $DBUser, $DBPassword)
     {
-        $this->logObject = new PDOLog();
+        //$this->logObject = new PDOLog();
         $this->Host = $Host;
         $this->DBPort = $DBPort;
         $this->DBName = $DBName;
@@ -72,20 +53,22 @@ class DB
                 $dsn .= 'dbname='.$this->DBName.';';
             }
             $dsn .= 'charset=utf8;';
-            $this->pdo = new PDO($dsn,
+            $this->pdo = new \PDO($dsn,
                 $this->DBUser,
                 $this->DBPassword,
                 [
                     //For PHP 5.3.6 or lower
-                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
-                    PDO::ATTR_EMULATE_PREPARES => false,
+                    \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+                    \PDO::ATTR_EMULATE_PREPARES => false,
 
                     //长连接
                     //PDO::ATTR_PERSISTENT => true,
 
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-                    PDO::MYSQL_ATTR_FOUND_ROWS => true,
+                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                    \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+                    \PDO::MYSQL_ATTR_FOUND_ROWS => true,
+                    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ,
+                    \PDO::ATTR_CASE => \PDO::CASE_NATURAL
                 ]
             );
             /*
@@ -138,7 +121,7 @@ class DB
                 }
             }
 
-            if (!isset($driverOptions[PDO::ATTR_CURSOR])) {
+            if (!isset($driverOptions[\PDO::ATTR_CURSOR])) {
                 $this->sQuery->execute();
             }
             ++$this->querycount;
@@ -221,7 +204,7 @@ class DB
      *
      * @return array|int|null
      */
-    public function query($query, $params = null, $fetchMode = PDO::FETCH_ASSOC)
+    public function query($query, $params = null, $fetchMode = \PDO::FETCH_ASSOC)
     {
         $query = trim($query);
         $rawStatement = preg_split("/( |\r|\n)/", $query);
@@ -245,11 +228,11 @@ class DB
      *
      * @return int|PDOIterator|null
      */
-    public function iterator($query, $params = null, $fetchMode = PDO::FETCH_ASSOC)
+    public function iterator($query, $params = null, $fetchMode = \PDO::FETCH_ASSOC)
     {
         $query = trim($query);
         $rawStatement = preg_split("/( |\r|\n)/", $query);
-        $this->Init($query, $params, [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL]);
+        $this->Init($query, $params, [\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL]);
         $statement = strtolower(trim($rawStatement[0]));
         if ($statement === 'select' || $statement === 'show' || $statement === 'call' || $statement === 'describe') {
             return new PDOIterator($this->sQuery, $fetchMode);
@@ -369,7 +352,7 @@ class DB
     public function column($query, $params = null)
     {
         $this->Init($query, $params);
-        $resultColumn = $this->sQuery->fetchAll(PDO::FETCH_COLUMN);
+        $resultColumn = $this->sQuery->fetchAll(\PDO::FETCH_COLUMN);
         $this->rowCount = $this->sQuery->rowCount();
         $this->columnCount = $this->sQuery->columnCount();
         $this->sQuery->closeCursor();
@@ -384,7 +367,7 @@ class DB
      *
      * @return mixed
      */
-    public function row($query, $params = null, $fetchmode = PDO::FETCH_ASSOC)
+    public function row($query, $params = null, $fetchmode = \PDO::FETCH_ASSOC)
     {
         $this->Init($query, $params);
         $resultRow = $this->sQuery->fetch($fetchmode);
