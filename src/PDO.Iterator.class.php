@@ -2,7 +2,7 @@
 
 namespace Fumagally\PDOMysql;
 
-class PDOIterator implements Iterator
+class PDOIterator
 {
     private $position = 0;
     private $pdo;
